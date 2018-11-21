@@ -1,12 +1,12 @@
 from collections import deque
 
-# Extends `deque` to implement simplified FIFO queue operations
+# Extends 'deque' to implement simplified FIFO queue operations
 class fifo_queue(deque):
 	def put(self, elem):
 		self.appendleft(elem)
 
 	def get(self):
-		return self.pop()
+		return self.pop() if len(self) > 0 else None
 
 
 class ready_process_queue():
@@ -19,10 +19,11 @@ class ready_process_queue():
 			fifo_queue(), # Priority 2
 			fifo_queue()  # Priority 3
 		]
+		self.all_procs = [self.realtime_procs, *self.user_procs]
 
 
 	def print(self):
-		print("%d processes ready." % self.process_count,)
+		print("%d processes ready." % self.process_count)
 		print("Real time (priority 0): %d" % len(self.realtime_procs), end=" ")
 		print([p.pid for p in self.realtime_procs])
 		for i in range(3):
@@ -31,20 +32,17 @@ class ready_process_queue():
 
 
 	def put(self, process):
-		if process.priority == 0:
-			self.realtime_procs.put(process)
-		else:
-			self.user_procs[process.priority - 1].put(process)
+		self.all_procs[process.priority].put(process)
 		self.process_count += 1
 
 
 	def get(self):
 		if self.process_count < 1:
 			return None
+
 		self.process_count -= 1
-		if len(self.realtime_procs) > 0:
-			return self.realtime_procs.get()
-		for q in self.user_procs:
-			if len(q) > 0:
-				return q.get()
+		for queue in self.all_procs:
+			process = queue.get()
+			if process != None:
+				return process
 
