@@ -10,9 +10,9 @@ class fifo_queue(deque):
 
 
 class ready_process_queue():
-	max_procs = 1000
 	def __init__(self):
 		self.process_count = 0
+		# Use only put() and get() methods on queues
 		self.realtime_procs = fifo_queue()
 		self.user_procs = [
 			fifo_queue(), # Priority 1
@@ -43,6 +43,6 @@ class ready_process_queue():
 		self.process_count -= 1
 		for queue in self.all_procs:
 			process = queue.get()
-			if process != None:
+			if process is not None:
 				return process
 

@@ -1,9 +1,14 @@
 from queue_module import ready_process_queue
-from process_module import process
+from process_module import process, dispatcher
 
 def main():
 	print("Program works!")
 	processes = read_processes_file("input_files/processes.txt")
+	_dispatcher = dispatcher(processes)
+	while _dispatcher.run():
+		pass
+	
+	print("Done")
 
 def read_processes_file(file_name):
 	with open(file_name, 'r') as file:
