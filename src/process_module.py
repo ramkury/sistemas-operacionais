@@ -61,3 +61,4 @@ class dispatcher():
 		print("\tscanner: %d" % process.scanner)
 		print("\tmodem: %d" % process.modem)
 		print("\tdrive: 0%d" % process.disk)
+		return True
