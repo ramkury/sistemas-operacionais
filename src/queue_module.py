@@ -8,6 +8,8 @@ class fifo_queue(deque):
 	def get(self):
 		return self.pop() if len(self) > 0 else None
 
+	def peek(self):
+		return self[-1]
 
 class ready_process_queue():
 	def __init__(self):
@@ -43,6 +45,6 @@ class ready_process_queue():
 		self.process_count -= 1
 		for queue in self.all_procs:
 			process = queue.get()
-			if process is not None:
+			if process:
 				return process
 

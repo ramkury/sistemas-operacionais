@@ -1,11 +1,11 @@
 from queue_module import ready_process_queue
-from process_module import process, dispatcher
+from process_module import process, process_manager
 
 def main():
 	print("Program works!")
 	processes = read_processes_file("input_files/processes.txt")
-	_dispatcher = dispatcher(processes)
-	while _dispatcher.run():
+	manager = process_manager(processes)
+	while manager.run():
 		pass
 	
 	print("Done")
