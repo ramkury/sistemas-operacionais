@@ -1,8 +1,10 @@
 from queue_module import ready_process_queue
 from process_module import process, process_manager
+from file_module import File, FileSystem
 
 def main():
 	print("Program works!")
+	file2 = FileSystem()
 	processes = read_processes_file("input_files/processes.txt")
 	manager = process_manager(processes)
 	while manager.run():
