@@ -15,8 +15,8 @@ def check_mem(priority, base_register, mem_block, alloc):
                 for i in range(len(rt_mem_space)):
                     if mem_block <= int(rt_mem_space[i][1]) and int(rt_mem_space[i][0]) >= 0 and int(rt_mem_space[i][0]) <= 64 and mem_block + int(rt_mem_space[i][0]) <= 64:
                         return alloc_mem(int(rt_mem_space[i][0]), mem_block, i, 0)
-                    else: 
-                        return None
+                
+                return None
         else:
             # Verifica se o espaço de memória pedido foi do tamanho correto definido de no máximo 960 blocos
             if mem_block > 960:
@@ -27,8 +27,8 @@ def check_mem(priority, base_register, mem_block, alloc):
                 for i in range(len(usr_mem_space)):
                     if mem_block <= int(usr_mem_space[i][1]) and int(usr_mem_space[i][0]) <= 1024  and mem_block + int(usr_mem_space[i][0]) <= 1024:
                         return alloc_mem(int(usr_mem_space[i][0]), mem_block, i, 1)
-                    else:
-                        return None
+                
+                return None
 
 # Função que aloca o processo na memória. Ela retira o espaço pedido pelo processo da lista de espaço livre.
 # Foi utilizado o first-fit, ou seja, ele aloca no primeiro espaço encontrado.
