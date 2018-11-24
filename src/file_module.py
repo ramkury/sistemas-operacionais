@@ -111,6 +111,8 @@ class FileSystem():
 
                 proc.proc_time -= 1
                 self.operation += 1
+
+        self.print_mapa_ocupacao()
                 
 
     def busca_espaco(self, size):
@@ -146,6 +148,22 @@ class FileSystem():
         self.ocup -= file.size
         self.files.pop(inicio_file)
         return True
+
+
+    def print_mapa_ocupacao(self):
+        print("\nMapa de ocupação do disco")
+        mapa = '|'
+        bit_map_iter = iter(enumerate(self.bit_map))
+        for i,bit in bit_map_iter:
+            if bit:
+                for j in range(self.files[i].size):
+                    mapa += "{}|".format(self.files[i].name)
+                    if not j == self.files[i].size-1:
+                        next(bit_map_iter)
+            else:
+                mapa += '0|'
+        mapa += '\n'
+        print(mapa)
 
 
 class File():

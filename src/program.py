@@ -5,7 +5,7 @@ from file_module import FileSystem
 def main():
 	print("Program works!")
 	processes = read_processes_file("input_files/processes.txt")
-	#FileSystem(processes)
+	# FileSystem(processes)
 	manager = process_manager(processes)
 	while manager.run():
 		pass
