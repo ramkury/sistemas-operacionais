@@ -1,23 +1,23 @@
 import datetime
 
 class FileSystem():
-    files = {}
+    files = {} # Arquivos contidos no disco e seus respectivos endereços iniciais
     
     def __init__(self, processes):
 
         with open("input_files/files.txt", 'r') as f:
             lines = [l.strip() for l in f.readlines()]
-        self.num_blocks = int(lines[0])
-        self.bit_map = [0 for _ in range(self.num_blocks)]
-        self.ocup = int(lines[1])
-        self.operation = 0
+        self.num_blocks = int(lines[0]) # Número de blocos ocupados
+        self.bit_map = [0 for _ in range(self.num_blocks)] # Mapa de bits
+        self.ocup = int(lines[1]) # Número de segmentos ocupados
+        self.operation = 0 # Número da operação realizada
         
         print("Sistema de arquivos =>")
         for line in lines[2:]:
             line = line.replace(' ', '')
             info = line.split(',')
 
-            # aloca os arquivos existentes
+            # aloca os arquivos já existentes no disco
             if info[0].isalpha():
                 info.insert(0, 0) #processo dispatcher com PID=0
                 bloco_inicial = int(info[2])
@@ -36,19 +36,28 @@ class FileSystem():
                 try:
                     proc_ind = [p.pid for p in processes].index(pid)
                 except ValueError:
+                    # Processo que não existe.
                     print("Operação {} => Falha".format(self.operation))
                     self.operation += 1
                     print("Não existe o processo {}.".format(pid))
                     continue
-                proc = processes[proc_ind]
 
+                proc = processes[proc_ind]
+                
+                # Processo tem tempo de processamento disponível?
                 if proc.proc_time > 0:
+
+                    # Escrever arquivo
                     if op == '0':
+
+                        # Arquivo existe?
                         if file_name not in [f.name for f in self.files.values()]:
+
                             num_blocks = int(info[3])
                             if num_blocks <= (self.num_blocks - self.ocup):
-                                info.pop(1)
+                                info.pop(1) #Mantém info no padrão desejado
                                 bloco_inicial = self.busca_espaco(num_blocks)
+                                # Existe espaço contínuo disponível para este tamanho de bloco?
                                 if bloco_inicial != -1:
                                     self.files[bloco_inicial] = File().create(info)
                                     for i in range(bloco_inicial,bloco_inicial+num_blocks):
@@ -61,15 +70,15 @@ class FileSystem():
                                                 blocos += ' e ' + str(bl)
                                                 break
                                             blocos += str(bl) + ', '
-                                        self.ocup += num_blocks
-                                        print("Operação {} => Sucesso".format(self.operation))
-                                        print("O processo {} criou o arquivo {} nos blocos {}. Sucesso."
-                                            .format(pid, file_name, blocos))
+                                        mensagem = "O processo {} criou o arquivo {} nos blocos {}. Sucesso.".format(pid, file_name, blocos)
+                                        
                                     else:
-                                        self.ocup += num_blocks
-                                        print("Operação {} => Sucesso".format(self.operation))
-                                        print("O processo {} criou o arquivo {} no bloco {}. Sucesso."
-                                            .format(pid, file_name, bloco_inicial))
+                                        mensagem = "O processo {} criou o arquivo {} no bloco {}. Sucesso.".format(pid, file_name, bloco_inicial)
+                                    
+                                    self.ocup += num_blocks
+                                    print("Operação {} => Sucesso".format(self.operation))
+                                    print(mensagem)
+                                
                                 else:
                                     print("Operação {} => Falha".format(self.operation))
                                     print("O processo {} não pode criar o arquivo {}. Não há espaço."
@@ -84,15 +93,18 @@ class FileSystem():
                             print("Operação {} => Falha".format(self.operation))
                             print("O arquivo {} já existe.".format(file_name))
 
+                    # Deletar arquivo
                     elif op == '1':
 
                         fil = self.get_file(file_name)
                         if fil:
                             if not fil.protected:
+                                # Operação de delete realizada com sucesso
                                 if self.delete_file(fil):
                                     print("Operação {} => Sucesso".format(self.operation))
                                     print("O processo {} deletou o arquivo {}.".format(pid, file_name))
                             else:
+                                # Verica se o processo que quer deletar é o criador do arquivo
                                 if fil.created_by == pid:
                                     if self.delete_file(fil):
                                         print("Operação {} => Sucesso".format(self.operation))
