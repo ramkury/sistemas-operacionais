@@ -11,8 +11,7 @@ def main():
 	while _dispatcher.has_processes() or manager.has_processes():
 		_dispatcher.run(manager)
 		manager.run()
-
-	FileSystem(processes)
+	fs = FileSystem(processes)
 	
 	print("Done")
 

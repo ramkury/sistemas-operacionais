@@ -98,14 +98,16 @@ class FileSystem():
 
                         fil = self.get_file(file_name)
                         if fil:
+                            # Se não for arquivo protegido, qualquer processo pode apagar
                             if not fil.protected:
                                 # Operação de delete realizada com sucesso
                                 if self.delete_file(fil):
                                     print("Operação {} => Sucesso".format(self.operation))
                                     print("O processo {} deletou o arquivo {}.".format(pid, file_name))
                             else:
-                                # Verica se o processo que quer deletar é o criador do arquivo
-                                if fil.created_by == pid:
+                                # Verica se é um processo de tempo real
+                                # Ou se o processo que quer deletar é o criador do arquivo
+                                if (proc.priority==0) or (fil.created_by == pid):
                                     if self.delete_file(fil):
                                         print("Operação {} => Sucesso".format(self.operation))
                                         print("O processo {} deletou o arquivo {}.".format(pid, file_name))
