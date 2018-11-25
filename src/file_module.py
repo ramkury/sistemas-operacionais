@@ -189,7 +189,7 @@ class File():
         self.size = int(file_info[2])
         self.name = file_info[1]
         self.created_by = file_info[0]
-        self.created_in = datetime.datetime.now()
+        self.created_at = datetime.datetime.now()
         self.protected = protected
 
         self._id += 1
