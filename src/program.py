@@ -3,6 +3,7 @@ from process_module import process, process_manager
 from file_module import FileSystem
 from dispatcher import dispatcher
 
+
 def main():
 	print("Program works!")
 	processes = read_processes_file("input_files/processes.txt")
@@ -15,11 +16,13 @@ def main():
 	
 	print("Done")
 
+
 def read_processes_file(file_name):
 	with open(file_name, 'r') as file:
 		lines = [line for line in file.readlines()]
 	procs = [process(info) for info in lines]
 	return procs
+
 
 if __name__ == "__main__":
 	main()

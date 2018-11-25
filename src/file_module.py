@@ -47,7 +47,7 @@ class FileSystem():
                 # Processo tem tempo de processamento disponível?
                 if proc.proc_time > 0:
 
-                    # Escrever arquivo
+                    # Criar arquivo
                     if op == '0':
 
                         # Arquivo existe?
@@ -57,11 +57,13 @@ class FileSystem():
                             if num_blocks <= (self.num_blocks - self.ocup):
                                 info.pop(1) #Mantém info no padrão desejado
                                 bloco_inicial = self.busca_espaco(num_blocks)
+                                
                                 # Existe espaço contínuo disponível para este tamanho de bloco?
                                 if bloco_inicial != -1:
                                     self.files[bloco_inicial] = File().create(info)
                                     for i in range(bloco_inicial,bloco_inicial+num_blocks):
                                         self.bit_map[i] = 1 
+                                    
                                     if num_blocks > 1:
                                         blocos = ''
                                         for bl in range(bloco_inicial, bloco_inicial+num_blocks):
@@ -71,7 +73,6 @@ class FileSystem():
                                                 break
                                             blocos += str(bl) + ', '
                                         mensagem = "O processo {} criou o arquivo {} nos blocos {}. Sucesso.".format(pid, file_name, blocos)
-                                        
                                     else:
                                         mensagem = "O processo {} criou o arquivo {} no bloco {}. Sucesso.".format(pid, file_name, bloco_inicial)
                                     
@@ -96,19 +97,20 @@ class FileSystem():
                     # Deletar arquivo
                     elif op == '1':
 
-                        fil = self.get_file(file_name)
-                        if fil:
+                        file = self.get_file(file_name)
+                        # Se arquivo existir, senão o erro já foi tratado na função get_file()
+                        if file:
                             # Se não for arquivo protegido, qualquer processo pode apagar
-                            if not fil.protected:
+                            if not file.protected:
                                 # Operação de delete realizada com sucesso
-                                if self.delete_file(fil):
+                                if self.delete_file(file):
                                     print("Operação {} => Sucesso".format(self.operation))
                                     print("O processo {} deletou o arquivo {}.".format(pid, file_name))
                             else:
                                 # Verica se é um processo de tempo real
                                 # Ou se o processo que quer deletar é o criador do arquivo
-                                if (proc.priority==0) or (fil.created_by == pid):
-                                    if self.delete_file(fil):
+                                if (proc.priority==0) or (file.created_by == pid):
+                                    if self.delete_file(file):
                                         print("Operação {} => Sucesso".format(self.operation))
                                         print("O processo {} deletou o arquivo {}.".format(pid, file_name))
                                 else:
