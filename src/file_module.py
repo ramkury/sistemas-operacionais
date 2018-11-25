@@ -23,7 +23,7 @@ class FileSystem():
                 bloco_inicial = int(info[2])
                 bloco_final = int(info[2])+int(info[3])
                 info.pop(2) # Mantém info no padrão desejado
-                self.files[bloco_inicial] = File().create(info)
+                self.files[bloco_inicial] = File(info)
                 for i in range(bloco_inicial,bloco_final):
                     self.bit_map[i] = 1 
             
@@ -60,7 +60,7 @@ class FileSystem():
                                 
                                 # Existe espaço contínuo disponível para este tamanho de bloco?
                                 if bloco_inicial != -1:
-                                    self.files[bloco_inicial] = File().create(info)
+                                    self.files[bloco_inicial] = File(info)
                                     for i in range(bloco_inicial,bloco_inicial+num_blocks):
                                         self.bit_map[i] = 1 
                                     
@@ -179,16 +179,14 @@ class FileSystem():
 class File():
     _id = 0
 
-    def create(self, file_info):
+    def __init__(self, file_info):
         # file_info[0] => pid
         # file_info[1] => name
         # file_info[2] => size
-        self.id = self._id
+        self.id = File._id
         self.size = int(file_info[2])
         self.name = file_info[1]
         self.created_by = file_info[0]
         self.created_at = datetime.datetime.now()
 
-        self._id += 1
-
-        return self
+        File._id += 1
