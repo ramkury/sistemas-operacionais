@@ -6,10 +6,10 @@ class fifo_queue(deque):
 		self.appendleft(elem)
 
 	def get(self):
-		return self.pop() if len(self) > 0 else None
+		return self.pop() if self else None
 
 	def peek(self):
-		return self[-1]
+		return self[-1] if self else None
 
 class ready_process_queue():
 	def __init__(self):
@@ -47,4 +47,7 @@ class ready_process_queue():
 			process = queue.get()
 			if process:
 				return process
+
+	def has_processes(self):
+		return any(self.all_procs)
 

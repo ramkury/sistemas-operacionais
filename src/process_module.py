@@ -1,5 +1,5 @@
 from queue_module import ready_process_queue, fifo_queue
-
+import memory_module as memory
 class process():
 	_pid = 0
 
@@ -22,75 +22,58 @@ class process():
 		process._pid += 1
 
 	def run(self):
-		print("Process %d" % self.pid)
 		if self._instruction == 0:
-			print("\tSTARTED")
-		else:
-			print("\tRESUMED")
+			print("Process %d STARTED" % self.pid)
 		
-		if self.priority == 0:
-			for _ in range(self.proc_time):
-				self._run_instruction()
-		else:
-			self._run_instruction()
-		
+		self._instruction += 1
+		print("Process %d: instruction %d" % (self.pid, self._instruction))		
+
 		if self._instruction < self.proc_time:
-			print("\tBLOCKED")
 			return False
 		else:
-			print("\treturn SIGINT")
+			print("Process %d: return SIGINT" % self.pid)
 			return True
 
-	def _run_instruction(self):
-		self._instruction += 1
-		print("\tinstruction %d" % self._instruction)
-
 class process_manager():
-	def __init__(self, processes):
+	def __init__(self):
 		self.ready_queue = ready_process_queue()
-		for process in processes:
-			self.ready_queue.put(process)
 		self.running = self.ready_queue.get()
-		self.current_time = 0
 		
 	def run(self):
-		if self.running.run():
+		if not self.running:
+			self.running = self.ready_queue.get()
+			if not self.running:
+				return False
+
+		completed = self.running.run()
+
+		if completed:
 			# If process is finished, free its resources
-			self.free_resources()
+			self._free_resources(self.running)
+			self.running = self.ready_queue.get()
 		
-		else:
+		elif self.running.priority > 0:
 			if self.running.priority < 3:
 				# If it is not lowest priority, lower the process's priority
 				self.running.priority += 1
+
 			self.ready_queue.put(self.running)
+			self.running = self.ready_queue.get()
 
-		return self.dispatch(self.ready_queue.get())
-
-
-	def dispatch(self, process):
-		self.running = process
-		if not process:
-			return False
-		print("Dispatcher =>")
-		print("\tPID: %d" % process.pid)
-		print("\toffset: %d" % process.offset)
-		print("\tblocks: %d" % process.mem_blocks)
-		print("\tpriority: %d" % process.priority)
-		print("\ttime: %d" % process.proc_time)
-		print("\tprinter: %d" % process.printer)
-		print("\tscanner: %d" % process.scanner)
-		print("\tmodem: %d" % process.modem)
-		print("\tdrive: 0%d" % process.disk)
 		return True
 
-	def _increment_time(self, process):
-		if self.running.priority == 0:
-			self.current_time += self.running.proc_time
-		else:
-			self.current_time += 1
 
-	def free_resources(self):
-		pass
+	def add_process(self, process):
+		address = memory.check_mem(process.priority, process.mem_blocks)
+		if address is None:
+			return False
+		process.offset = address
+		self.ready_queue.put(process)
 
-	def update_processes(self):
-		pass
+
+	def has_processes(self):
+		return self.ready_queue.has_processes()
+
+
+	def _free_resources(self, process):
+		memory.check_free_mem(process.offset, process.mem_blocks, process.priority)
