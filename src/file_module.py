@@ -17,17 +17,17 @@ class FileSystem():
             line = line.replace(' ', '')
             info = line.split(',')
 
-            # aloca os arquivos já existentes no disco
+            # Aloca os arquivos já existentes no disco
             if info[0].isalpha():
-                info.insert(0, -1) #processo dispatcher não possui PID, inserido -1
+                info.insert(0, -1) # Processo dispatcher não possui PID, inserido -1
                 bloco_inicial = int(info[2])
                 bloco_final = int(info[2])+int(info[3])
-                info.pop(2)
+                info.pop(2) # Mantém info no padrão desejado
                 self.files[bloco_inicial] = File().create(info, protected=False)
                 for i in range(bloco_inicial,bloco_final):
                     self.bit_map[i] = 1 
             
-            # realiza as operacoes de create e delete
+            # Realiza as operacoes de create e delete
             else:
                 pid = int(info[0])
                 op = info[1]
@@ -55,7 +55,7 @@ class FileSystem():
 
                             num_blocks = int(info[3])
                             if num_blocks <= (self.num_blocks - self.ocup):
-                                info.pop(1) #Mantém info no padrão desejado
+                                info.pop(1) # Mantém info no padrão desejado
                                 bloco_inicial = self.busca_espaco(num_blocks)
                                 
                                 # Existe espaço contínuo disponível para este tamanho de bloco?
