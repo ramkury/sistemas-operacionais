@@ -100,22 +100,16 @@ class FileSystem():
                         file = self.get_file(file_name)
                         # Se arquivo existir, senão o erro já foi tratado na função get_file()
                         if file:
-                            # Se não for arquivo protegido, qualquer processo pode apagar
-                            if not file.protected:
-                                # Operação de delete realizada com sucesso
+                            # Verica se é um processo de tempo real
+                            # Ou se o processo que quer deletar é o criador do arquivo
+                            # (para caso seja um processo de usuário)
+                            if (proc.priority==0) or (file.created_by == pid):
                                 if self.delete_file(file):
                                     print("Operação {} => Sucesso".format(self.operation))
                                     print("O processo {} deletou o arquivo {}.".format(pid, file_name))
                             else:
-                                # Verica se é um processo de tempo real
-                                # Ou se o processo que quer deletar é o criador do arquivo
-                                if (proc.priority==0) or (file.created_by == pid):
-                                    if self.delete_file(file):
-                                        print("Operação {} => Sucesso".format(self.operation))
-                                        print("O processo {} deletou o arquivo {}.".format(pid, file_name))
-                                else:
-                                    print("Operação {} => Falha".format(self.operation))
-                                    print("O processo {} não pode deletar o arquivo {}".format(pid, file_name))
+                                print("Operação {} => Falha".format(self.operation))
+                                print("O processo {} não pode deletar o arquivo {}".format(pid, file_name))
 
                     else:
                         print("Operação {} => Falha".format(self.operation))
