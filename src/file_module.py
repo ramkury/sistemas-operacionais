@@ -1,7 +1,6 @@
 import datetime
 
 class FileSystem():
-    files = {} # Arquivos contidos no disco e seus respectivos endereços iniciais
     
     def __init__(self):
 
@@ -11,6 +10,7 @@ class FileSystem():
         self.bit_map = [0 for _ in range(self.num_blocks)] # Mapa de bits
         self.ocup = int(lines[1]) # Número de segmentos ocupados
         self.operation_num = 0 # Número da operação realizada
+        self.files = {} # Arquivos contidos no disco e seus respectivos endereços iniciais
         
         for line in lines[2:]:
             line = line.replace(' ', '')
