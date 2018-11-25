@@ -23,7 +23,7 @@ class FileSystem():
                 bloco_inicial = int(info[2])
                 bloco_final = int(info[2])+int(info[3])
                 info.pop(2) # Mantém info no padrão desejado
-                self.files[bloco_inicial] = File().create(info, protected=False)
+                self.files[bloco_inicial] = File().create(info)
                 for i in range(bloco_inicial,bloco_final):
                     self.bit_map[i] = 1 
             
@@ -179,7 +179,7 @@ class FileSystem():
 class File():
     _id = 0
 
-    def create(self, file_info, protected=True):
+    def create(self, file_info):
         # file_info[0] => pid
         # file_info[1] => name
         # file_info[2] => size
@@ -188,7 +188,6 @@ class File():
         self.name = file_info[1]
         self.created_by = file_info[0]
         self.created_at = datetime.datetime.now()
-        self.protected = protected
 
         self._id += 1
 
