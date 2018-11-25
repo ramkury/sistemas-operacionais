@@ -19,7 +19,7 @@ class FileSystem():
 
             # aloca os arquivos já existentes no disco
             if info[0].isalpha():
-                info.insert(0, 0) #processo dispatcher com PID=0
+                info.insert(0, -1) #processo dispatcher não possui PID, inserido -1
                 bloco_inicial = int(info[2])
                 bloco_final = int(info[2])+int(info[3])
                 info.pop(2)
