@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 
-# class memory():
 # Checkagem da memória para verificar se o processo está apto a ser alocado.
 def check_mem(priority, mem_block):
     if priority == 0:
@@ -50,8 +49,8 @@ def alloc_mem(proccess_size, index, priority):
 
     return base
 
-# Função verifica a memória livre e o processo a ser liberado para que possa ser liberado corretamenteo e ocorrer coalescência caso necessário
-def check_free_mem(base_register, proccess_size, priority):
+# Função verifica a memória livre e o processo a ser liberado para que possa ser liberado corretamente e ocorrer coalescência caso necessário
+def free_mem(base_register, proccess_size, priority):
     index = 0
     if priority == 0:
         # Loop para fazer verificação de onde o espaço livre irá entrar na lista de memória livre e se irá ocorres coalescência
@@ -137,66 +136,5 @@ def disalloc_mem(base_register, proccess_size, index, priority):
                 aux = (int(base_register), int(proccess_size))
                 usr_mem_space.insert(index + 1, aux)
 
-
-# def __init__(self, size):
 rt_mem_space = [(0, 64)]
 usr_mem_space = [(64, 960)]
-
-# Os valores abaixo serviu para testar a ideia de Alocação com Partição Variável, Fist-fit e Coalescencia. Caso queria testar, só rodar esse módulo apenas e
-# ir modificando os valores abaixo e prioridades;
-
-# print(rt_mem_space)
-# print(usr_mem_space)
-
-# priority = 0
-# mem_block = 6
-
-# check_mem(priority, 0, mem_block, 1)
-
-# print(rt_mem_space)
-# print(usr_mem_space)
-
-# priority = 0
-# mem_block = 50
-
-# check_mem(priority, 0, mem_block, 1)
-
-# print(rt_mem_space)
-# print(usr_mem_space)
-
-# priority = 0
-# mem_block = 8
-
-# check_mem(priority, 0, mem_block, 1)
-
-# print(rt_mem_space)
-# print(usr_mem_space)
-
-# priority = 0
-# base_register = 30
-# mem_block = 24
-
-# check_free_mem(base_register, mem_block, priority)
-
-# print(rt_mem_space)
-# print(usr_mem_space)
-
-# priority = 0
-# base_register = 0
-# mem_block = 10
-
-# check_free_mem(base_register, mem_block, priority)
-
-# print(rt_mem_space)
-# print(usr_mem_space)
-
-# priority = 0
-# base_register = 54
-# mem_block = 2
-
-# check_free_mem(base_register, mem_block, priority)
-
-# print(rt_mem_space)
-# print(usr_mem_space)
-
-# ATT: Retornando None caso não dê pra alocar e o endereço base caso dê pra alocar

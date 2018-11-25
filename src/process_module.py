@@ -76,4 +76,4 @@ class process_manager():
 
 
 	def _free_resources(self, process):
-		memory.check_free_mem(process.offset, process.mem_blocks, process.priority)
+		memory.free_mem(process.offset, process.mem_blocks, process.priority)
