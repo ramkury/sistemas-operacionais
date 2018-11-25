@@ -10,9 +10,8 @@ class FileSystem():
         self.num_blocks = int(lines[0]) # Número de blocos ocupados
         self.bit_map = [0 for _ in range(self.num_blocks)] # Mapa de bits
         self.ocup = int(lines[1]) # Número de segmentos ocupados
-        self.operation = 0 # Número da operação realizada
+        self.operation_num = 0 # Número da operação realizada
         
-        print("Sistema de arquivos =>")
         for line in lines[2:]:
             line = line.replace(' ', '')
             info = line.split(',')
@@ -25,104 +24,121 @@ class FileSystem():
                 info.pop(2) # Mantém info no padrão desejado
                 self.files[bloco_inicial] = File().create(info)
                 for i in range(bloco_inicial,bloco_final):
-                    self.bit_map[i] = 1 
-            
-            # Realiza as operacoes de create e delete
+                    self.bit_map[i] = 1
             else:
-                pid = int(info[0])
-                op = info[1]
-                file_name = info[2]
+                break
+            
 
-                try:
-                    proc_ind = [p.pid for p in processes].index(pid)
-                except ValueError:
-                    # Processo que não existe.
-                    print("Operação {} => Falha".format(self.operation))
-                    self.operation += 1
-                    print("Não existe o processo {}.".format(pid))
-                    continue
+    def run(self, info, process):
+        # Realiza as operacoes de create e delete
+        # info deve estar no padrão do arquivo files.txt, ou seja,
+        # [pid, op_code, file_name, (num_blocks, se op_code==0)]
+        # process é o objeto process()
+        
+        if self.operation_num == 0:
+            print("Sistema de arquivos =>")
+            
+        pid = int(info[0])
+        op = info[1]
+        file_name = info[2]
 
-                proc = processes[proc_ind]
-                
-                # Processo tem tempo de processamento disponível?
-                if proc.proc_time > 0:
+        #TODO Tratamento se o processo existe ou não, talvez melhor ser feito no process_modulo
+        # try:
+        #     proc_ind = [p.pid for p in processes].index(pid)
+        # except ValueError:
+        #     # Processo que não existe.
+        #     print("Operação {} => Falha".format(self.operation_num))
+        #     self.operation_num += 1
+        #     print("Não existe o processo {}.".format(pid))
+        #     erro = 1
 
-                    # Criar arquivo
-                    if op == '0':
+        # process = processes[proc_ind]
+        
+        # Processo tem tempo de processamento disponível?
+        if process.proc_time > 0:
 
-                        # Arquivo existe?
-                        if file_name not in [f.name for f in self.files.values()]:
+            # Criar arquivo
+            if op == '0':
 
-                            num_blocks = int(info[3])
-                            if num_blocks <= (self.num_blocks - self.ocup):
-                                info.pop(1) # Mantém info no padrão desejado
-                                bloco_inicial = self.busca_espaco(num_blocks)
-                                
-                                # Existe espaço contínuo disponível para este tamanho de bloco?
-                                if bloco_inicial != -1:
-                                    self.files[bloco_inicial] = File().create(info)
-                                    for i in range(bloco_inicial,bloco_inicial+num_blocks):
-                                        self.bit_map[i] = 1 
-                                    
-                                    if num_blocks > 1:
-                                        blocos = ''
-                                        for bl in range(bloco_inicial, bloco_inicial+num_blocks):
-                                            if bl == bloco_inicial+num_blocks-1:
-                                                blocos = blocos[:-2]
-                                                blocos += ' e ' + str(bl)
-                                                break
-                                            blocos += str(bl) + ', '
-                                        mensagem = "O processo {} criou o arquivo {} nos blocos {}. Sucesso.".format(pid, file_name, blocos)
-                                    else:
-                                        mensagem = "O processo {} criou o arquivo {} no bloco {}. Sucesso.".format(pid, file_name, bloco_inicial)
-                                    
-                                    self.ocup += num_blocks
-                                    print("Operação {} => Sucesso".format(self.operation))
-                                    print(mensagem)
-                                
-                                else:
-                                    print("Operação {} => Falha".format(self.operation))
-                                    print("O processo {} não pode criar o arquivo {}. Não há espaço."
-                                    .format(pid, file_name))
+                # Arquivo existe?
+                if file_name not in [f.name for f in self.files.values()]:
 
+                    num_blocks = int(info[3])
+                    if num_blocks <= (self.num_blocks - self.ocup):
+                        info.pop(1) # Mantém info no padrão desejado
+                        bloco_inicial = self.busca_espaco(num_blocks)
+                        
+                        # Existe espaço contínuo disponível para este tamanho de bloco?
+                        if bloco_inicial != -1:
+                            self.files[bloco_inicial] = File().create(info)
+                            for i in range(bloco_inicial,bloco_inicial+num_blocks):
+                                self.bit_map[i] = 1 
+                            
+                            if num_blocks > 1:
+                                blocos = ''
+                                for bl in range(bloco_inicial, bloco_inicial+num_blocks):
+                                    if bl == bloco_inicial+num_blocks-1:
+                                        blocos = blocos[:-2]
+                                        blocos += ' e ' + str(bl)
+                                        break
+                                    blocos += str(bl) + ', '
+                                mensagem = "O processo {} criou o arquivo {} nos blocos {}. Sucesso.".format(pid, file_name, blocos)
                             else:
-                                print("Operação {} => Falha".format(self.operation))
-                                print("O processo {} não pode criar o arquivo {}. Não há espaço."
-                                    .format(pid, file_name))
-
+                                mensagem = "O processo {} criou o arquivo {} no bloco {}. Sucesso.".format(pid, file_name, bloco_inicial)
+                            
+                            self.ocup += num_blocks
+                            print("Operação {} => Sucesso".format(self.operation_num))
+                            print(mensagem)
+                        
                         else:
-                            print("Operação {} => Falha".format(self.operation))
-                            print("O arquivo {} já existe.".format(file_name))
-
-                    # Deletar arquivo
-                    elif op == '1':
-
-                        file = self.get_file(file_name)
-                        # Se arquivo existir, senão o erro já foi tratado na função get_file()
-                        if file:
-                            # Verica se é um processo de tempo real
-                            # Ou se o processo que quer deletar é o criador do arquivo
-                            # (para caso seja um processo de usuário)
-                            if (proc.priority==0) or (file.created_by == pid):
-                                if self.delete_file(file):
-                                    print("Operação {} => Sucesso".format(self.operation))
-                                    print("O processo {} deletou o arquivo {}.".format(pid, file_name))
-                            else:
-                                print("Operação {} => Falha".format(self.operation))
-                                print("O processo {} não pode deletar o arquivo {}".format(pid, file_name))
-
+                            print("Operação {} => Falha".format(self.operation_num))
+                            print("O processo {} não pode criar o arquivo {}. Não há espaço."
+                            .format(pid, file_name))
+                            erro = True
                     else:
-                        print("Operação {} => Falha".format(self.operation))
-                        print("Operação inválida!")
-                
+                        print("Operação {} => Falha".format(self.operation_num))
+                        print("O processo {} não pode criar o arquivo {}. Não há espaço."
+                            .format(pid, file_name))
+                        erro = True
+
                 else:
-                    print("Operação {} => Falha".format(self.operation))
-                    print("Falha! O processo {} já encerrou o seu tempo de processamento.".format(pid))
+                    print("Operação {} => Falha".format(self.operation_num))
+                    print("O arquivo {} já existe.".format(file_name))
+                    erro = True
 
-                proc.proc_time -= 1
-                self.operation += 1
+            # Deletar arquivo
+            elif op == '1':
 
-        self.print_mapa_ocupacao()
+                file = self.get_file(file_name)
+                # Se arquivo existir, senão o erro já foi tratado na função get_file()
+                if file:
+                    # Verica se é um processo de tempo real
+                    # Ou se o processo que quer deletar é o criador do arquivo
+                    # (para caso seja um processo de usuário)
+                    if (process.priority==0) or (file.created_by == pid):
+                        if self.delete_file(file):
+                            print("Operação {} => Sucesso".format(self.operation_num))
+                            print("O processo {} deletou o arquivo {}.".format(pid, file_name))
+                    else:
+                        print("Operação {} => Falha".format(self.operation_num))
+                        print("O processo {} não pode deletar o arquivo {}".format(pid, file_name))
+                        erro = True
+
+            else:
+                print("Operação {} => Falha".format(self.operation_num))
+                print("Operação inválida!")
+                erro = True
+        
+        else:
+            print("Operação {} => Falha".format(self.operation_num))
+            print("Falha! O processo {} já encerrou o seu tempo de processamento.".format(pid))
+            erro = True
+
+        process.proc_time -= 1
+        self.operation_num += 1
+        if erro:
+            return False
+        return True
                 
 
     def busca_espaco(self, size):
@@ -186,7 +202,7 @@ class File():
         self.id = self._id
         self.size = int(file_info[2])
         self.name = file_info[1]
-        self.created_by = file_info[0]
+        self.created_by = int(file_info[0])
         self.created_at = datetime.datetime.now()
 
         self._id += 1
