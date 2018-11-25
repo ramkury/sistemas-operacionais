@@ -2,7 +2,7 @@
 
 # class memory():
 # Checkagem da memória para verificar se o processo está apto a ser alocado.
-def check_mem(priority, base_register, mem_block, alloc):
+def check_mem(priority, mem_block, alloc):
     # Caso o pedido seja de alocar processo na memória (alloc == 1)
     if alloc == 1:
         if priority == 0:
@@ -14,7 +14,7 @@ def check_mem(priority, base_register, mem_block, alloc):
                 # e se addr_inicial_da_mem_livre + espaço_pedido ultrapassa o tamanho reservado na memória de 64 blocos
                 for i in range(len(rt_mem_space)):
                     if mem_block <= int(rt_mem_space[i][1]) and int(rt_mem_space[i][0]) >= 0 and int(rt_mem_space[i][0]) <= 64 and mem_block + int(rt_mem_space[i][0]) <= 64:
-                        return alloc_mem(int(rt_mem_space[i][0]), mem_block, i, 0)
+                        return alloc_mem(mem_block, i, 0)
                 
                 return None
         else:
@@ -26,13 +26,13 @@ def check_mem(priority, base_register, mem_block, alloc):
                 # e se addr_inicial_da_mem_livre + espaço_pedido ultrapassa o tamanho reservado na memória de 960 blocos
                 for i in range(len(usr_mem_space)):
                     if mem_block <= int(usr_mem_space[i][1]) and int(usr_mem_space[i][0]) <= 1024  and mem_block + int(usr_mem_space[i][0]) <= 1024:
-                        return alloc_mem(int(usr_mem_space[i][0]), mem_block, i, 1)
+                        return alloc_mem(mem_block, i, 1)
                 
                 return None
 
 # Função que aloca o processo na memória. Ela retira o espaço pedido pelo processo da lista de espaço livre.
 # Foi utilizado o first-fit, ou seja, ele aloca no primeiro espaço encontrado.
-def alloc_mem(base_register, proccess_size, index, priority):
+def alloc_mem(proccess_size, index, priority):
     if priority == 0:
         base = rt_mem_space[index][0]
         size = rt_mem_space[index][1]
