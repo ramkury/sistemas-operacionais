@@ -6,6 +6,7 @@ class dispatcher():
 		self.process_queue = fifo_queue()
 		self.process_queue.extend(sorted(processes, key = lambda p: p.startup_time, reverse = True))
 		
+		
 	def dispatch(self, process):
 		print("Dispatcher =>")
 		print("\tPID: %d" % process.pid)
@@ -31,5 +32,6 @@ class dispatcher():
 			manager.add_process(process)
 			self.dispatch(process)
 	
+
 	def has_processes(self):
 		return any(self.process_queue)

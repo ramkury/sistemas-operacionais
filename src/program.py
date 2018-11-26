@@ -5,15 +5,16 @@ from dispatcher import dispatcher
 import sys
 
 def main():
-	print("Program works!")
-	processes = read_processes_file(sys.argv[1])
+	procs_file = sys.argv[1] if len(sys.argv) > 1 else "input_files/processes.txt"
+	files_file = sys.argv[2] if len(sys.argv) > 2 else "input_files/files.txt"
+	processes = read_processes_file(procs_file)
 	manager = process_manager()
 	_dispatcher = dispatcher(processes)
 	while _dispatcher.has_processes() or manager.has_processes():
 		_dispatcher.run(manager)
 		manager.run()
 
-	fs = FileSystem(sys.argv[2])
+	fs = FileSystem(files_file)
 	fs.run_operations(processes)
 	fs.print_disk_occup_map()
 	

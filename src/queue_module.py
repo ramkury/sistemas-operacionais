@@ -1,4 +1,20 @@
 from collections import deque
+from Lib import heapq
+
+class priority_queue():
+	def __init__(self):
+		self._heap = []
+
+	def put(self, process):
+		heapq.heappush(self._heap, (process.priority, process))
+
+	def get(self):
+		if not self._heap:
+			return None
+		return heapq.heappop(self._heap)[1]
+
+	def has_processes(self):
+		return len(self._heap) > 0
 
 # Extends 'deque' to implement simplified FIFO queue operations
 class fifo_queue(deque):
