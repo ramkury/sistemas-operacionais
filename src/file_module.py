@@ -2,13 +2,13 @@ import datetime
 
 class FileSystem():
     
-    def __init__(self):
+    def __init__(self, nome):
 
         # Inicializa o FileSystem com os arquivos já contidos no disco
 
         print("\nSistema de arquivos =>")
 
-        with open("input_files/files.txt", 'r') as f:
+        with open(nome, 'r') as f:
             lines = [l.strip() for l in f.readlines()]
 
         self.num_blocks = int(lines[0]) # Número de blocos ocupados

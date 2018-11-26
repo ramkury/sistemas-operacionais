@@ -2,18 +2,18 @@ from queue_module import ready_process_queue
 from process_module import process, process_manager
 from file_module import FileSystem
 from dispatcher import dispatcher
-
+import sys
 
 def main():
 	print("Program works!")
-	processes = read_processes_file("input_files/processes.txt")
+	processes = read_processes_file(sys.argv[1])
 	manager = process_manager()
 	_dispatcher = dispatcher(processes)
 	while _dispatcher.has_processes() or manager.has_processes():
 		_dispatcher.run(manager)
 		manager.run()
 
-	fs = FileSystem()
+	fs = FileSystem(sys.argv[2])
 	fs.run_operations(processes)
 	fs.print_disk_occup_map()
 	
