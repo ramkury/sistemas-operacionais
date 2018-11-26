@@ -12,7 +12,10 @@ def main():
 	while _dispatcher.has_processes() or manager.has_processes():
 		_dispatcher.run(manager)
 		manager.run()
-	# fs = FileSystem(processes)
+
+	fs = FileSystem()
+	fs.run_operations(processes)
+	fs.print_disk_occup_map()
 	
 	print("Done")
 
