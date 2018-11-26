@@ -1,5 +1,5 @@
 from collections import deque
-from Lib import heapq
+import heapq
 
 class priority_queue():
 	def __init__(self):

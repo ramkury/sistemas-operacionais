@@ -1,4 +1,4 @@
-from queue_module import ready_process_queue, fifo_queue, priority_queue
+from queue_module import ready_process_queue, priority_queue
 import memory_module as memory
 from resource_module import GerenciadorRecursos
 
@@ -60,7 +60,7 @@ class process_manager():
 		if completed:
 			# If process is finished, free its resources
 			self._free_resources(self.running)
-			self.running = self.ready_queue.get()
+			self.running = None
 		
 		elif self.running.priority > 0:
 			if self.running.priority < 3:
@@ -68,7 +68,7 @@ class process_manager():
 				self.running.priority += 1
 
 			self.ready_queue.put(self.running)
-			self.running = self.ready_queue.get()
+			self.running = None
 
 		return True
 
