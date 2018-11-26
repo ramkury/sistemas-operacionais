@@ -1,6 +1,6 @@
 from queue_module import ready_process_queue, priority_queue
 import memory_module as memory
-from resource_module import GerenciadorRecursos
+from resource_module import resource_manager
 
 class process():
 	_pid = 0
@@ -40,7 +40,7 @@ class process():
 
 class process_manager():
 	def __init__(self):
-		self.resource_manager = GerenciadorRecursos()
+		self.resource_manager = resource_manager()
 		self.ready_queue = ready_process_queue()
 		self.running = self.ready_queue.get()
 		self.blocked_printer = [priority_queue(), priority_queue()]
@@ -96,19 +96,19 @@ class process_manager():
 		if not process:
 			return False
 		if process.printer > 0 and index <= 0:
-			if not self.resource_manager.solicita_impressora(process.printer):
+			if not self.resource_manager.request_printer(process.printer):
 				self.blocked_printer[process.printer - 1].put(process)
 				return False
 		if process.scanner > 0 and index <= 1:
-			if not self.resource_manager.solicita_scanner():
+			if not self.resource_manager.request_scanner():
 				self.blocked_scanner.put(process)
 				return False
 		if process.modem > 0 and index <= 2:
-			if not self.resource_manager.solicita_modem():
+			if not self.resource_manager.request_modem():
 				self.blocked_modem.put(process)
 				return False
 		if process.disk > 0:
-			if not self.resource_manager.solicita_SATA(process.disk):
+			if not self.resource_manager.request_sata(process.disk):
 				self.blocked_disk[process.disk - 1].put(process)
 				return False
 		return True
@@ -117,22 +117,22 @@ class process_manager():
 	def _free_resources(self, process):
 		memory.free_mem(process.offset, process.mem_blocks, process.priority)
 		if process.printer > 0:
-			self.resource_manager.libera_impressora(process.printer)
+			self.resource_manager.free_printer(process.printer)
 			blocked = self.blocked_printer[process.printer - 1].get()
 			if self._get_resources(blocked, 0):
 				self.ready_queue.put(blocked)
 		if process.scanner > 0:
-			self.resource_manager.libera_scanner()
+			self.resource_manager.free_scanner()
 			blocked = self.blocked_scanner.get()
 			if self._get_resources(blocked, 1):
 				self.ready_queue.put(blocked)
 		if process.modem > 0:
-			self.resource_manager.libera_modem()
+			self.resource_manager.free_modem()
 			blocked = self.blocked_modem.get()
 			if self._get_resources(blocked, 2):
 				self.ready_queue.put(blocked)
 		if process.disk > 0:
-			self.resource_manager.libera_SATA(process.disk)
+			self.resource_manager.free_sata(process.disk)
 			blocked = self.blocked_disk[process.disk - 1].get()
 			if self._get_resources(blocked, 3):
 				self.ready_queue.put(blocked)

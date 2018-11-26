@@ -1,5 +1,5 @@
 from process_module import process, process_manager
-from file_module import FileSystem
+from file_module import file_system
 from dispatcher import dispatcher
 import sys
 
@@ -13,7 +13,7 @@ def main():
 		_dispatcher.run(manager)
 		manager.run()
 
-	fs = FileSystem(files_file)
+	fs = file_system(files_file)
 	fs.run_operations(processes)
 	fs.print_disk_occup_map()
 	

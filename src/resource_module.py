@@ -1,23 +1,23 @@
-class GerenciadorRecursos():
+class resource_manager():
 
     def __init__(self):
         # True indica recurso disponível e False indica recurso ocupado.
         self.scanner = True
-        self.impressoras = [True,True]
+        self.printers = [True,True]
         self.modem = True
-        self.SATA = [True, True]
+        self.sata = [True, True]
         
-    def solicita_scanner(self):
+    def request_scanner(self):
         if self.scanner:
             self.scanner = False
             return True
         else:
             return False
 
-    def solicita_impressora(self, num):
+    def request_printer(self, num):
         try:
-            if self.impressoras[num-1]:
-                self.impressoras[num-1] = False
+            if self.printers[num-1]:
+                self.printers[num-1] = False
                 return True
             else:
                 return False
@@ -25,17 +25,17 @@ class GerenciadorRecursos():
             print("Número de impressora inválido.")
             return False
 
-    def solicita_modem(self):
+    def request_modem(self):
         if self.modem:
             self.modem = False
             return True
         else:
             return False
 
-    def solicita_SATA(self,num):
+    def request_sata(self,num):
         try:
-            if self.SATA[num-1]:
-                self.SATA[num-1] = False
+            if self.sata[num-1]:
+                self.sata[num-1] = False
                 return True
             else:
                 return False
@@ -43,30 +43,30 @@ class GerenciadorRecursos():
             print("Número de SATA inválido.")
             return False
 
-    def libera_scanner(self):
+    def free_scanner(self):
         self.scanner = True
 
-    def libera_impressora(self, num):
-        self.impressoras[num-1] = True
+    def free_printer(self, num):
+        self.printers[num-1] = True
 
-    def libera_modem(self):
+    def free_modem(self):
         self.modem = True
 
-    def libera_SATA(self, num):
-        self.SATA[num-1] = True
+    def free_sata(self, num):
+        self.sata[num-1] = True
 
-    def print_estado_dispositivos(self):
+    def print_devices_state(self):
         if self.scanner:
             print("Scanner => Livre.")
         else:
             print("Scanner => Ocupada.")
 
-        if self.impressoras[0]:
+        if self.printers[0]:
             print("Impressora 1 => Livre.")
         else:
             print("Impressora 1 => Ocupada.")
 
-        if self.impressoras[1]:
+        if self.printers[1]:
             print("Impressora 2 => Livre.")
         else:
             print("Impressora 2 => Ocupada.")
@@ -76,12 +76,12 @@ class GerenciadorRecursos():
         else:
             print("Modem => Ocupado.")
 
-        if self.SATA[0]:
+        if self.sata[0]:
             print("SATA 1 => Livre.")
         else:
             print("SATA 1 => Ocupada.")
 
-        if self.SATA[1]:
+        if self.sata[1]:
             print("SATA 2 => Livre.")
         else:
             print("SATA 2 => Ocupada.")

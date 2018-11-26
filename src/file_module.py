@@ -1,6 +1,6 @@
 import datetime
 
-class FileSystem():
+class file_system():
     
     def __init__(self, nome):
 
